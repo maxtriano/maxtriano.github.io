@@ -1,6 +1,6 @@
 ---
 layout: category-post
-title: "hi"
+title: "Naval Ravikant is Wrong"
 date: 2019-06-09
 categories: writing
 ---
