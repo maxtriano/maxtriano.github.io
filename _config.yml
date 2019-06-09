@@ -1,4 +1,5 @@
-theme: jekyll-theme-cayman
+remote_theme: broccolini/swiss
+theme_color: black
 title: Max Triano
 description: >
   Computer Science student at the University of Michigan, runner, geek
