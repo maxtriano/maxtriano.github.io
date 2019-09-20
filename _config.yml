@@ -1,4 +1,4 @@
-#remote_theme: broccolini/swiss
+remote_theme: broccolini/swiss
 theme_color: white
 title: Max Triano
 description: >
@@ -7,4 +7,4 @@ description: >
 social_link: twitter
 social_username: maxtriano
 
-theme: jekyll-theme-minimal
+#theme: jekyll-theme-minimal
