@@ -2,7 +2,9 @@ remote_theme: broccolini/swiss
 theme_color: black
 title: Max Triano
 description: >
-  Computer science student, runner, geek. I might write stuff here sometimes.
+  Hi! I'm a computer science student at the University of Michigan. 
+  My interests include machine learning, AI safety, data science, and computational complexity theory. 
+  I also [run](https://www.strava.com/athletes/795276) for UM's club track and field team.
   
 social_link: twitter
 social_username: maxtriano
