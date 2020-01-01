@@ -1,5 +1,6 @@
-remote_theme: broccolini/swiss
-theme_color: black
+#remote_theme: broccolini/swiss
+#theme_color: black
+remote_theme: huangyz0918/moving
 title: Max Triano
 description: >
   Hi! I'm a computer science student at the University of Michigan. 
