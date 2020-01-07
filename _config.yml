@@ -1,6 +1,6 @@
 #remote_theme: broccolini/swiss
 #theme_color: black
-remote_theme: huangyz0918/moving
+remote_theme: "mmistakes/minimal-mistakes@4.17.2"
 title: Max Triano
 description: >
   Hi! I'm a computer science student at the University of Michigan. 
@@ -9,5 +9,6 @@ description: >
   
 social_link: twitter
 social_username: maxtriano
-
+plugins:
+    - jekyll-include-cache
 #theme: jekyll-theme-minimal
