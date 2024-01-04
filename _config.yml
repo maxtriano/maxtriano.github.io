@@ -1,11 +1,10 @@
 #remote_theme: broccolini/swiss
 #theme_color: black
 remote_theme: "mmistakes/minimal-mistakes@4.17.2"
+minimal_mistakes_skin: "sunrise"
 title: Max Triano
 description: >
-  Hi! I'm a computer science student at the University of Michigan. 
-  My interests include machine learning, AI safety, data science, and computational complexity theory. 
-  I also run for UM's club track and field team!
+  Hi!
   
 social_link: twitter
 social_username: maxtriano
