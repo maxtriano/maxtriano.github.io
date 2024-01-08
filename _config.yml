@@ -6,8 +6,18 @@ title: Max Triano
 description: >
   Hi!
   
-social_link: twitter
+social_link: github
 social_username: maxtriano
 plugins:
     - jekyll-include-cache
 #theme: jekyll-theme-minimal
+
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
