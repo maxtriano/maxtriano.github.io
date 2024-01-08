@@ -1,17 +1,14 @@
 #remote_theme: broccolini/swiss
 #theme_color: black
-remote_theme: "mmistakes/minimal-mistakes@4.17.2"
+remote_theme: "mmistakes/minimal-mistakes@4.24.0"
 minimal_mistakes_skin: "sunrise"
 title: Max Triano
 description: >
   Hi!
   
-social_link: github
-social_username: maxtriano
 plugins:
     - jekyll-include-cache
-#theme: jekyll-theme-minimal
-
+    
 defaults:
   # _posts
   - scope:
