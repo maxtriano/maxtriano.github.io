@@ -1,28 +1,4 @@
-<!-- <html>
-    <style>
-        /* Add styles for body and container positioning */
-        body {
-            margin: 0;
-            padding: 20px;
-        }
-        
-        h1 {
-            margin-bottom: 30px; /* Add space below the heading */
-        }
-        
-        img {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-        }
-        
-        #container {
-            position: relative;
-            margin-top: 100px; /* Add space between heading and container */
-        }
-    </style>
-    <title>vibe screenshots</title>
-    <h1>inspired by Alexey Guzey: <a href="https://guzey.com/vibes/">https://guzey.com/vibes/</a></h1>
-</html> -->
+<h1>inspired by Alexey Guzey: <a href="https://guzey.com/vibes/">https://guzey.com/vibes/</a></h1>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -44,17 +20,15 @@
             overflow: hidden;
         }
 
-        /* Image container for positioning */
+        /* Image container styling */
         .image-container {
             position: absolute;
             transition: all 0.5s ease-in-out;
         }
 
-        /* Individual image styling */
+        /* Image styling - removed fixed dimensions */
         .image {
-            width: 192px;
-            height: 192px;
-            object-fit: cover;
+            display: block; /* Prevents unwanted spacing */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -77,49 +51,50 @@
             background-color: #2563eb;
         }
     </style>
-    <h1>inspired by Alexey Guzey: <a href="https://guzey.com/vibes/">https://guzey.com/vibes/</a></h1>
 </head>
 <body>
     <button class="shuffle-button" onclick="randomizePositions()">Shuffle</button>
     
     <script>
-        // Configuration
-        const IMAGE_SIZE = 192; // Size of images in pixels
-        const SPACING = 16;    // Minimum space between images
+        // Minimum space between images
+        const SPACING = 16;
 
         // List your images here - update this when you add new images
-        // The path should be relative to your HTML file
         const images = [
-            { src: 'images/image1.png'},
-            // { src: 'images/image2.jpg'},
+            { src: 'images/image1.png', alt: 'Vibe 1' }
             // Add more images as needed
         ];
 
-        // Collision detection - checks if two rectangles overlap
+        // Store image dimensions after loading
+        const imageDimensions = new Map();
+
+        // Checks if two rectangles overlap
         function isOverlapping(rect1, rect2) {
-            return !(rect1.left + IMAGE_SIZE + SPACING < rect2.left ||
-                    rect1.left > rect2.left + IMAGE_SIZE + SPACING ||
-                    rect1.top + IMAGE_SIZE + SPACING < rect2.top ||
-                    rect1.top > rect2.top + IMAGE_SIZE + SPACING);
+            return !(rect1.left + rect1.width + SPACING < rect2.left ||
+                    rect1.left > rect2.left + rect2.width + SPACING ||
+                    rect1.top + rect1.height + SPACING < rect2.top ||
+                    rect1.top > rect2.top + rect2.height + SPACING);
         }
 
         // Finds a valid position for an image that doesn't overlap with others
-        function findValidPosition(existingPositions) {
+        function findValidPosition(imageWidth, imageHeight, existingPositions) {
             const maxAttempts = 100;
             let attempts = 0;
             
             while (attempts < maxAttempts) {
-                // Calculate available space within viewport
-                const maxWidth = window.innerWidth - IMAGE_SIZE;
-                const maxHeight = window.innerHeight - IMAGE_SIZE;
+                // Calculate available space considering image dimensions
+                const maxWidth = window.innerWidth - imageWidth;
+                const maxHeight = window.innerHeight - imageHeight;
                 
-                // Generate a random position
+                // Generate random position
                 const position = {
                     left: Math.floor(Math.random() * maxWidth),
-                    top: Math.floor(Math.random() * maxHeight)
+                    top: Math.floor(Math.random() * maxHeight),
+                    width: imageWidth,
+                    height: imageHeight
                 };
                 
-                // Check if this position overlaps with any existing images
+                // Check for overlaps with existing images
                 const hasOverlap = existingPositions.some(existing => 
                     isOverlapping(position, existing)
                 );
@@ -131,36 +106,56 @@
                 attempts++;
             }
             
-            // If no valid position found, stack below other images
+            // Fallback position - stack below other images
             return {
                 left: 0,
-                top: Math.max(...existingPositions.map(p => p.top), 0) + IMAGE_SIZE + SPACING
+                top: Math.max(...existingPositions.map(p => p.top + p.height), 0) + SPACING,
+                width: imageWidth,
+                height: imageHeight
             };
         }
 
-        // Creates and positions all images on the page
-        function initializeImages() {
-            // Remove any existing images
-            document.querySelectorAll('.image-container').forEach(el => el.remove());
-            
-            // Create and add each image to the page
-            images.forEach((image, index) => {
-                const container = document.createElement('div');
-                container.className = 'image-container';
-                
-                const img = document.createElement('img');
-                img.className = 'image';
-                img.src = image.src;
-                img.alt = image.alt;
-                
-                // Add loading="lazy" for better performance with many images
-                img.loading = 'lazy';
-                
-                container.appendChild(img);
-                document.body.appendChild(container);
+        // Creates image elements and waits for them to load
+        async function createAndLoadImages() {
+            const imagePromises = images.map(imageData => {
+                return new Promise((resolve) => {
+                    const container = document.createElement('div');
+                    container.className = 'image-container';
+                    
+                    const img = document.createElement('img');
+                    img.className = 'image';
+                    img.src = imageData.src;
+                    img.alt = imageData.alt;
+                    img.loading = 'lazy';
+                    
+                    // Wait for image to load to get its dimensions
+                    img.onload = () => {
+                        imageDimensions.set(container, {
+                            width: img.naturalWidth,
+                            height: img.naturalHeight
+                        });
+                        resolve(container);
+                    };
+                    
+                    container.appendChild(img);
+                    document.body.appendChild(container);
+                });
             });
             
-            // Position all images
+            // Wait for all images to load
+            return Promise.all(imagePromises);
+        }
+
+        // Initializes the page with images
+        async function initializeImages() {
+            // Remove existing images
+            document.querySelectorAll('.image-container').forEach(el => el.remove());
+            imageDimensions.clear();
+            
+            // Create and load new images
+            const containers = await createAndLoadImages();
+            
+            // Position all images once loaded
             randomizePositions();
         }
 
@@ -170,7 +165,8 @@
             const positions = [];
             
             containers.forEach(container => {
-                const position = findValidPosition(positions);
+                const dims = imageDimensions.get(container);
+                const position = findValidPosition(dims.width, dims.height, positions);
                 positions.push(position);
                 
                 container.style.left = `${position.left}px`;
