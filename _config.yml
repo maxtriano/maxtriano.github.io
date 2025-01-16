@@ -79,11 +79,6 @@ naver_site_verification  :
 yandex_site_verification :
 baidu_site_verification  :
 
-# Masthead
-main:
-  - title: "Vibes"
-    url: /vibes/
-
 # Social Sharing
 og_image                 : # Open Graph/Twitter default site image
 # For specifying social profiles
