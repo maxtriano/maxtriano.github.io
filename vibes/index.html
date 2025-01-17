@@ -1,3 +1,4 @@
+<h1>inspired by Alexey Guzey: <a href="https://guzey.com/vibes/">https://guzey.com/vibes/</a></h1>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,13 +24,11 @@
             transition: all 0.5s ease-in-out;
         }
 
-        /* Set maximum dimensions while preserving aspect ratio */
+        /* Remove fixed constraints from CSS - we'll handle sizing in JavaScript */
         .image {
             display: block;
-            max-width: 200px;  /* Maximum width for any image */
-            max-height: 200px; /* Maximum height for any image */
-            width: auto;       /* Allow width to scale proportionally */
-            height: auto;      /* Allow height to scale proportionally */
+            width: auto;
+            height: auto;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -51,41 +50,65 @@
             background-color: #2563eb;
         }
     </style>
-    <h1>inspired by Alexey Guzey: <a href="https://guzey.com/vibes/">https://guzey.com/vibes/</a></h1>
 </head>
 <body>
     <button class="shuffle-button" onclick="randomizePositions()">Shuffle</button>
     
     <script>
-        const SPACING = 16;  // Space between images
-        const MAX_SIZE = 500; // Maximum size for scaling
+        const SPACING = 16;       // Space between images
+        const MIN_SIZE = 100;     // Minimum size for any image dimension
+        const MAX_SIZE = 300;     // Maximum size for any image dimension
+        const MIN_SCALE = 0.3;    // Minimum scaling factor (30% of original size)
+        const MAX_SCALE = 1.0;    // Maximum scaling factor (100% of original size)
 
         // List your images here
         const images = [
-            { src: 'images/image1.png'},
-            { src: 'images/image2.jpg'},
-            { src: 'images/image3.png'},
+            { src: 'images/image1.png', alt: 'Vibe 1' },
+            { src: 'images/image2.jpg', alt: 'Vibe 2' },
+            { src: 'images/image3.png', alt: 'Vibe 2' },
             // Add more images as needed
         ];
 
-        // Store scaled dimensions after loading
+        // Store dimensions and scaling information
         const imageDimensions = new Map();
+
+        // Generate a random scale factor between MIN_SCALE and MAX_SCALE
+        function getRandomScale() {
+            return MIN_SCALE + Math.random() * (MAX_SCALE - MIN_SCALE);
+        }
 
         // Calculate scaled dimensions while preserving aspect ratio
         function calculateScaledDimensions(naturalWidth, naturalHeight) {
+            // Generate a random scale factor for this image
+            const scaleFactor = getRandomScale();
+            
+            // Calculate initial scaled dimensions
+            let width = naturalWidth * scaleFactor;
+            let height = naturalHeight * scaleFactor;
+            
+            // Ensure dimensions stay within bounds while preserving aspect ratio
             const aspectRatio = naturalWidth / naturalHeight;
-            let width, height;
-
-            if (naturalWidth > naturalHeight) {
-                // Landscape or square image
-                width = Math.min(MAX_SIZE, naturalWidth);
+            
+            // If either dimension is too large, scale down proportionally
+            if (width > MAX_SIZE) {
+                width = MAX_SIZE;
                 height = width / aspectRatio;
-            } else {
-                // Portrait image
-                height = Math.min(MAX_SIZE, naturalHeight);
+            }
+            if (height > MAX_SIZE) {
+                height = MAX_SIZE;
                 width = height * aspectRatio;
             }
-
+            
+            // If either dimension is too small, scale up proportionally
+            if (width < MIN_SIZE) {
+                width = MIN_SIZE;
+                height = width / aspectRatio;
+            }
+            if (height < MIN_SIZE) {
+                height = MIN_SIZE;
+                width = height * aspectRatio;
+            }
+            
             return { width, height };
         }
 
@@ -143,11 +166,17 @@
                     img.loading = 'lazy';
                     
                     img.onload = () => {
-                        // Calculate scaled dimensions based on natural size
+                        // Calculate new random scaled dimensions
                         const scaledDims = calculateScaledDimensions(
                             img.naturalWidth,
                             img.naturalHeight
                         );
+                        
+                        // Apply the scaled dimensions directly to the image
+                        img.style.width = `${scaledDims.width}px`;
+                        img.style.height = `${scaledDims.height}px`;
+                        
+                        // Store dimensions for positioning
                         imageDimensions.set(container, scaledDims);
                         resolve(container);
                     };
@@ -187,7 +216,7 @@
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(randomizePositions, 100);
+            resizeTimeout = setTimeout(initializeImages, 100);
         });
     </script>
 </body>
