@@ -1,4 +1,6 @@
 # Masthead
 main:
-    - title: "Vibes"
-      url: /vibes/
+  - title: "About"
+    url: /about/
+  - title: "Vibes"
+    url: /vibes/
